@@ -7,10 +7,12 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -20,18 +22,23 @@ import frc.robot.subsystems.SwerveSubsystem;
  */
 public class RobotContainer {
   private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
+  private final VisionSubsystem visionSubsystem = new VisionSubsystem();
 
   private final XboxController driverController = new XboxController(OIConstants.kDriverControllerPort);
 
+  private final Command rc_drive = new RunCommand(()-> swerveSubsystem.drive(driverController.getLeftX(),driverController.getLeftY(),driverController.getRightX()), swerveSubsystem);
+
+    
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(
-      swerveSubsystem,
-      () -> -driverController.getRawAxis(OIConstants.kDriverYAxis),
-      () -> driverController.getRawAxis(OIConstants.kDriverXAxis),
-      () -> driverController.getRawAxis(OIConstants.kDriverRotAxis),
-      () -> driverController.getRawButton(OIConstants.kDriverFieldOrientedButtonIdx)
-    ));
+    // swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(
+    //   swerveSubsystem,
+    //   () -> -driverController.getRawAxis(OIConstants.kDriverYAxis),
+    //   () -> driverController.getRawAxis(OIConstants.kDriverXAxis),
+    //   () -> driverController.getRawAxis(OIConstants.kDriverRotAxis),
+    //   () -> driverController.getRawButton(OIConstants.kDriverFieldOrientedButtonIdx)
+    // ));
+    swerveSubsystem.setDefaultCommand(rc_drive);
     // Configure the button bindings
     configureButtonBindings();
   }
