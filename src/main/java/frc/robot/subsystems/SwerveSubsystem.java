@@ -137,9 +137,8 @@ boolean fieldOriented = false;
      ChassisSpeeds chassisSpeeds;
 
 
-     if (fieldOriented) 
-       chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, turningSpeed, getRotation2d());
-      else 
+    //   chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, turningSpeed, getRotation2d());
+    
        chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
      
  
@@ -154,8 +153,8 @@ boolean fieldOriented = false;
         
     // 1. Get real-time joystick inputs
     double xSpeed = xSpd;
-    double ySpeed = ySpd*-1;
-    double turningSpeed = turningSpd*-1;
+    double ySpeed = ySpd;
+    double turningSpeed = turningSpd;
 
     // 2. Apply deadband
     xSpeed = Math.abs(xSpeed) > OIConstants.kDeadband ? xSpeed : 0.0;

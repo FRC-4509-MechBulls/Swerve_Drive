@@ -26,11 +26,12 @@ public class RobotContainer {
 
   private final XboxController driverController = new XboxController(OIConstants.kDriverControllerPort);
 
-  private final Command rc_drive = new RunCommand(()-> swerveSubsystem.drive(driverController.getLeftX(),driverController.getLeftY(),driverController.getRightX()), swerveSubsystem);
+  private final Command rc_drive = new RunCommand(()-> swerveSubsystem.joystickDrive(driverController.getLeftY()*-1,driverController.getLeftX()*-1,driverController.getRightX()*-1), swerveSubsystem);
 
     
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
     // swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(
     //   swerveSubsystem,
     //   () -> -driverController.getRawAxis(OIConstants.kDriverYAxis),
