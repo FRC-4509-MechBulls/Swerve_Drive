@@ -28,6 +28,7 @@ public class RobotContainer {
 
   private final Command rc_drive = new RunCommand(()-> swerveSubsystem.joystickDrive(driverController.getLeftY()*-1,driverController.getLeftX()*-1,driverController.getRightX()*-1), swerveSubsystem);
 
+  private final Command rc_goToTag = new RunCommand(()->swerveSubsystem.drive(visionSubsystem.getDesiredSpeeds()[0],visionSubsystem.getDesiredSpeeds()[1],visionSubsystem.getDesiredSpeeds()[2]), swerveSubsystem);
     
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -52,6 +53,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     new JoystickButton(driverController, XboxController.Button.kStart.value).whenPressed(() -> swerveSubsystem.zeroHeading());
+    new JoystickButton(driverController, XboxController.Button.kY.value).whenHeld(rc_goToTag);
   }
 
   /**
