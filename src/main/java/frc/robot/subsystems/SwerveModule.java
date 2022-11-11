@@ -83,7 +83,7 @@ public class SwerveModule extends SubsystemBase {
   }
 
   public double getDriveVelocity() {
-    return driveMotor.getSelectedSensorVelocity() / ModuleConstants.kMetersToDrive;
+    return driveMotor.getSelectedSensorVelocity() / ModuleConstants.kMetersToDrive; //convert raw sensor units to m/s
   }
 
   //is this even used?
@@ -117,14 +117,14 @@ public class SwerveModule extends SubsystemBase {
     //Debug output: SmartDashboard.putNumber("preOpRadians" + absoluteEncoder.getSourceChannel(), state.angle.getRadians());
     state = SwerveModuleState.optimize(state, getState().angle); //makes it so wheel never turns more than 90 deg
 
-    //DO I USE VELOCITY OR PERCENT OUTPUT???
     driveMotor.set(TalonFXControlMode.PercentOutput, state.speedMetersPerSecond / DriveConstants.kPhysicalMaxSpeedMetersPerSecond); //scales vel down using max speed
     turningMotor.set(TalonFXControlMode.PercentOutput, turningPidController.calculate(getTurningPosition(), state.angle.getRadians()));
     //^^^calculates output for the angle setpoint and current pos
-    //SmartDashboard.putString("Swerve[" + absoluteEncoder.getSourceChannel() + "] state", state.toString()); //debugging info
-    SmartDashboard.putNumber("setRadians" + absoluteEncoder.getSourceChannel(), state.angle.getRadians());
+    //Debug output: SmartDashboard.putString("Swerve[" + absoluteEncoder.getSourceChannel() + "] state", state.toString()); //debugging info
+    //Debug output: SmartDashboard.putNumber("setRadians" + absoluteEncoder.getSourceChannel(), state.angle.getRadians());
   }
 
+  //stops both motors on the module
   public void stop() {
     driveMotor.set(TalonFXControlMode.PercentOutput, 0);
     turningMotor.set(TalonFXControlMode.PercentOutput, 0);

@@ -80,10 +80,13 @@ public class SwerveSubsystem extends SubsystemBase {
   //reset gyroscope to have it set the current direction as the forward direction of field when robot boots up
   public void zeroHeading() {
         gyro.zeroGyroBiasNow();
+        gyro.setYaw(0);
   }
 
+  //A number equal to x - (y Q), where Q is the quotient of x / y rounded to the nearest integer
+  //(if x / y falls halfway between two integers, the even integer is returned)
   public double getHeading() {
-        return Math.IEEEremainder(gyro.getYaw(), 360); //clamps value between -/+ 180 deg
+        return Math.IEEEremainder(gyro.getYaw(), 360); //clamps value between -/+ 180 deg where zero is forward
   }
 
   //since wpilib often wants heading in format of Rotation2d
@@ -96,8 +99,6 @@ public class SwerveSubsystem extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("Robot Heading", getHeading());
     SmartDashboard.putBoolean("Drive method called", Timer.getFPGATimestamp()-lastDriveCall<0.1);
-//     if(Timer.getFPGATimestamp()-lastDriveCall>0.1)
-//       stopModules();
   }
 
   public void stopModules() {

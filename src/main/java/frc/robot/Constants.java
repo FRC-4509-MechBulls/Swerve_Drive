@@ -20,24 +20,22 @@ import edu.wpi.first.wpilibj.XboxController;
 public final class Constants {
 
     public static final class ModuleConstants {
-        public static final double kWheelDiameterMeters = Units.inchesToMeters(3.8); //needs to be changed
-        public static final double kDriveMotorGearRatio = 6.75; 
-        public static final double kTurningMotorGearRatio = 21.4286; //needs to be changed
-        public static final double kDriveEncoderRot2Meter = kDriveMotorGearRatio * Math.PI * kWheelDiameterMeters;
-        public static final double kTurningEncoderRot2Rad = kTurningMotorGearRatio * 2 * Math.PI;
-        public static final double kDriveEncoderRPM2MeterPerSec = kDriveEncoderRot2Meter / 60;
-        public static final double kTurningEncoderRPM2RadPerSec = kTurningEncoderRot2Rad / 60;
-        public static final double kPTurning = 0.5; //idk
+        //Physical
+        public static final double kWheelDiameterMeters = Units.inchesToMeters(3.8);
+        public static final double kDriveMotorGearRatio = 6.75;
+        public static final double kTurningMotorGearRatio = 21.4286;
 
+        //Conversions
         public static final double kFalconTicks = 2048;
         public static final double kRadiansToFalcon = kFalconTicks / (2 * Math.PI);
         public static final double kRadiansToTurning = kRadiansToFalcon * kTurningMotorGearRatio;
-
         public static final double kWheelCircumference = kWheelDiameterMeters * Math.PI;
         public static final double kMetersToRotations = (1 / kWheelCircumference);
         public static final double kMetersToDrive = kMetersToRotations * kDriveMotorGearRatio * kFalconTicks;
-
         public static final double kAbsToRadians = 2.0 * Math.PI;
+
+        //Gains
+        public static final double kPTurning = 0.5; //idk
     }
 
     public static final class DriveConstants {
@@ -92,15 +90,15 @@ public final class Constants {
         public static final boolean kBackLeftDriveAbsoluteEncoderReversed = false;
         public static final boolean kBackRightDriveAbsoluteEncoderReversed = false;
 
-        public static final double kPhysicalMaxSpeedMetersPerSecond = Units.feetToMeters(16.3); //need to find
-        public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = kPhysicalMaxSpeedMetersPerSecond/(Units.inchesToMeters(16)); //i don't think it is used in the code
+        public static final double kRadius = Units.inchesToMeters(32/2);
+
+        public static final double kPhysicalMaxSpeedMetersPerSecond = Units.feetToMeters(16.3);
+        public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = kPhysicalMaxSpeedMetersPerSecond / kRadius;
 
         public static final double kTeleDriveMaxAccelerationUnitsPerSecond = Units.feetToMeters(10); //idk
-        public static final double kTeleDriveMaxAngularAccelerationUnitsPerSecond = Units.feetToMeters(10); //idk
+        public static final double kTeleDriveMaxAngularAccelerationUnitsPerSecond = kPhysicalMaxAngularSpeedRadiansPerSecond * 2 * Math.PI; //idk
         public static final double kTeleDriveMaxSpeedMetersPerSecond = kPhysicalMaxSpeedMetersPerSecond;
         public static final double kTeleDriveMaxAngularSpeedRadiansPerSecond = kPhysicalMaxAngularSpeedRadiansPerSecond;
-
-        public static final int kMagEncoderMinPulseHz = 220;
     }
 
     public static final class OIConstants {
@@ -108,7 +106,7 @@ public final class Constants {
         public static final int kDriverYAxis = XboxController.Axis.kLeftY.value;
         public static final int kDriverXAxis = XboxController.Axis.kLeftX.value;
         public static final int kDriverRotAxis = XboxController.Axis.kRightX.value;
-        public static final int kDriverFieldOrientedButtonIdx = XboxController.Button.kRightBumper.value; //TBD??
+        public static final int kDriverFieldOrientedButtonIdx = XboxController.Button.kRightBumper.value;
 
         public static final double kDeadband = 0.05; //can be changed
     }
