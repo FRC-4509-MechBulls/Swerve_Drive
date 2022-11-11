@@ -4,15 +4,22 @@
 
 package frc.robot.subsystems;
 
+import java.sql.Time;
+
 import com.ctre.phoenix.sensors.Pigeon2;
+
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import com.ctre.phoenix.sensors.Pigeon2.AxisDirection;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.OIConstants;
 
 public class SwerveSubsystem extends SubsystemBase {
   private final SwerveModule frontLeft = new SwerveModule(
@@ -87,9 +94,11 @@ public class SwerveSubsystem extends SubsystemBase {
         return Rotation2d.fromDegrees(getHeading());
   }
 
+  double lastDriveCall = 0;
   @Override
   public void periodic() {
-      //debug output: SmartDashboard.putNumber("Robot Heading", getHeading());
+    SmartDashboard.putNumber("Robot Heading", getHeading());
+    SmartDashboard.putBoolean("Drive method called", Timer.getFPGATimestamp()-lastDriveCall<0.1);
   }
 
   public void stopModules() {
@@ -107,5 +116,52 @@ public class SwerveSubsystem extends SubsystemBase {
         backLeft.setDesiredState(desiredStates[2]);
         backRight.setDesiredState(desiredStates[3]);
   }
+
+
+  SlewRateLimiter xLimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAccelerationUnitsPerSecond);
+  SlewRateLimiter yLimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAccelerationUnitsPerSecond);
+  SlewRateLimiter turningLimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAngularAccelerationUnitsPerSecond);
+      
+
+boolean fieldOriented = false;
+
+  public void drive(double xSpeed, double ySpeed, double turningSpeed){
+       // lastDriveCall = Timer.getFPGATimestamp();
+     // 3. Make the driving smoother, no sudden acceleration from sudden inputs
+     xSpeed = xLimiter.calculate(xSpeed * DriveConstants.kTeleDriveMaxSpeedMetersPerSecond);
+     ySpeed = yLimiter.calculate(ySpeed * DriveConstants.kTeleDriveMaxSpeedMetersPerSecond);
+     turningSpeed = turningLimiter.calculate(turningSpeed * DriveConstants.kTeleDriveMaxAngularSpeedRadiansPerSecond);
+     //SmartDashboard.putNumber("xspeed", xSpeed);
+     //SmartDashboard.putNumber("turningspeed", turningSpeed);
+ 
+     // 4. Construct desired chassis speeds (convert to appropriate reference frames)
+     ChassisSpeeds chassisSpeeds;
+
+
+    //   chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, turningSpeed, getRotation2d());
+    
+       chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
+     
+ 
+     // 5. Convert chassis speeds to individual module states
+     SwerveModuleState[] moduleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
+ 
+     // 6. Output each module states to wheels
+     setModuleStates(moduleStates);
+  }
+
+  public void joystickDrive(double xSpd, double ySpd, double turningSpd){
         
+    // 1. Get real-time joystick inputs
+    double xSpeed = xSpd;
+    double ySpeed = ySpd;
+    double turningSpeed = turningSpd;
+
+    // 2. Apply deadband
+    xSpeed = Math.abs(xSpeed) > OIConstants.kDeadband ? xSpeed : 0.0;
+    ySpeed = Math.abs(ySpeed) > OIConstants.kDeadband ? ySpeed : 0.0;
+    turningSpeed = Math.abs(turningSpeed) > OIConstants.kDeadband ? turningSpeed : 0.0;
+      drive(xSpeed, ySpeed, turningSpeed);
+  }
+       
 }
