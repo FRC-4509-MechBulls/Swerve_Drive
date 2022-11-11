@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import java.io.FileReader;
 import java.sql.Time;
 
 import com.ctre.phoenix.sensors.Pigeon2;
@@ -124,6 +125,10 @@ public class SwerveSubsystem extends SubsystemBase {
       
 
 boolean fieldOriented = false;
+public boolean getFieldOriented(){return fieldOriented;}
+public void setFieldOriented(boolean set){fieldOriented = set;}
+public void toggleFieldOriented(){fieldOriented = !fieldOriented;}
+
 
   public void drive(double xSpeed, double ySpeed, double turningSpeed){
        // lastDriveCall = Timer.getFPGATimestamp();
@@ -137,9 +142,11 @@ boolean fieldOriented = false;
      // 4. Construct desired chassis speeds (convert to appropriate reference frames)
      ChassisSpeeds chassisSpeeds;
 
+SmartDashboard.putBoolean("fieldOriented", fieldOriented);
 
-    //   chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, turningSpeed, getRotation2d());
-    
+if(fieldOriented)
+       chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, turningSpeed, getRotation2d());
+    else
        chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
      
  
