@@ -131,35 +131,34 @@ public void toggleFieldOriented(){fieldOriented = !fieldOriented;}
 
 
   public void drive(double xSpeed, double ySpeed, double turningSpeed){
-       // lastDriveCall = Timer.getFPGATimestamp();
-     // 3. Make the driving smoother, no sudden acceleration from sudden inputs
+     //  Make the driving smoother, no sudden acceleration from sudden inputs
      xSpeed = xLimiter.calculate(xSpeed * DriveConstants.kTeleDriveMaxSpeedMetersPerSecond);
      ySpeed = yLimiter.calculate(ySpeed * DriveConstants.kTeleDriveMaxSpeedMetersPerSecond);
      turningSpeed = turningLimiter.calculate(turningSpeed * DriveConstants.kTeleDriveMaxAngularSpeedRadiansPerSecond);
      //SmartDashboard.putNumber("xspeed", xSpeed);
      //SmartDashboard.putNumber("turningspeed", turningSpeed);
  
-     // 4. Construct desired chassis speeds (convert to appropriate reference frames)
+     // Construct desired chassis speeds (convert to appropriate reference frames)
      ChassisSpeeds chassisSpeeds;
 
-SmartDashboard.putBoolean("fieldOriented", fieldOriented);
+      SmartDashboard.putBoolean("fieldOriented", fieldOriented);
 
-if(fieldOriented)
+      if(fieldOriented)
        chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, turningSpeed, getRotation2d());
     else
        chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
      
  
-     // 5. Convert chassis speeds to individual module states
+     // Convert chassis speeds to individual module states
      SwerveModuleState[] moduleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
  
-     // 6. Output each module states to wheels
+     // Output each module states to wheels
      setModuleStates(moduleStates);
   }
 
   public void joystickDrive(double xSpd, double ySpd, double turningSpd){
         
-    // 1. Get real-time joystick inputs
+    // 1. Convert joystick inputs
     double xSpeed = xSpd;
     double ySpeed = ySpd;
     double turningSpeed = turningSpd;

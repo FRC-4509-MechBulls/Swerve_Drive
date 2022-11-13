@@ -111,5 +111,14 @@ public final class Constants {
         public static final double kDeadband = 0.05; //can be changed
     }
 
+    public static double absMax(double input, double max){ //This probably exists somewhere else 😋
+        max = Math.abs(max);
+        if(Math.abs(input)>max){
+            if(input>0) input = max;
+            else        input = -max;
+        }
+        return input;
+    }
+
 
 }

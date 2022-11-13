@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 //meaga cool super epic coding time I love code so much UwU -Isaac
 
@@ -41,6 +42,8 @@ public class VisionSubsystem extends SubsystemBase {
     }
   }
 
+
+
   boolean lastSeenOnRight;
   Transform3d lastTransform = new Transform3d();
   double lastSeenTime;
@@ -58,16 +61,11 @@ public double[] getDesiredSpeeds(){
   out[0] = lastTransform.getX()-1; // get one meter from target
   out[1] = lastTransform.getY();
 
-  double absMax = 0.1;
-  for(int i = 0; i<out.length; i++){
-    if(Math.abs(out[i])>absMax){
-      if(out[i]>0) out[i] = absMax;
-      else out[i] = -absMax;
+  //out[2] = lastTransform.getRotation().getX(); //this might be the wrong axis, uncomment this for rotation tracking
 
-      if(Math.abs(out[i])<0.1)
-      out[i]=0;
-    }
-  }
+  out[0] = Constants.absMax(out[0], 0.1);
+  out[1] = Constants.absMax(out[1], 0.1);
+  out[2] = Constants.absMax(out[2], 0.1);
 
 
   return out;
