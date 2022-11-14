@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -27,10 +28,20 @@ public class VisionSubsystem extends SubsystemBase {
     for(PhotonTrackedTarget target :camera.getLatestResult().getTargets()){
       int id = target.getFiducialId();
       Transform3d transform = target.getBestCameraToTarget();
+      Rotation3d rotation = transform.getRotation();
 
       SmartDashboard.putNumber("tag"+id+".X", transform.getX());
       SmartDashboard.putNumber("tag"+id+".Y", transform.getY());
       SmartDashboard.putNumber("tag"+id+".Z", transform.getZ());
+
+      SmartDashboard.putNumber("tag"+id+".rX", rotation.getX());
+      SmartDashboard.putNumber("tag"+id+".rY", rotation.getY());
+      SmartDashboard.putNumber("tag"+id+".rZ", rotation.getZ());
+
+      
+  double rotationFromCamera = Math.IEEEremainder(lastTransform.getRotation().getZ() + Math.PI, 2*Math.PI);
+  SmartDashboard.putNumber("rotationFromCamera", rotationFromCamera);
+
 
       if(id==0){
         lastSeenOnRight = transform.getY()>0;
@@ -61,11 +72,13 @@ public double[] getDesiredSpeeds(){
   out[0] = lastTransform.getX()-1; // get one meter from target
   out[1] = lastTransform.getY();
 
-  //out[2] = lastTransform.getRotation().getX(); //this might be the wrong axis, uncomment this for rotation tracking
+  double rotationFromCamera = Math.IEEEremainder(lastTransform.getRotation().getZ() + Math.PI, 2*Math.PI);
+  out[2] =  rotationFromCamera;//this might be the wrong axis, uncomment this for rotation tracking
 
   out[0] = Constants.absMax(out[0], 0.1);
   out[1] = Constants.absMax(out[1], 0.1);
-  out[2] = Constants.absMax(out[2], 0.1);
+  if(Math.abs(out[2])<0.1) out[2] = 0;
+  out[2] = Constants.absMax(out[2], 0.05);
 
 
   return out;
