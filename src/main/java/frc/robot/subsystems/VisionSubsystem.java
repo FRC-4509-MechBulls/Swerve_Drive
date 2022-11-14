@@ -69,14 +69,15 @@ public double[] getDesiredSpeeds(){
     return out;
   }
 
-  out[0] = lastTransform.getX()-1; // get one meter from target
-  out[1] = lastTransform.getY();
+  out[0] = (lastTransform.getX()-1) *0.5; // get one meter from target
+  out[1] = lastTransform.getY() * 0.5;
+  SmartDashboard.putNumber("out0",out[0]);
 
   double rotationFromCamera = Math.IEEEremainder(lastTransform.getRotation().getZ() + Math.PI, 2*Math.PI);
   out[2] =  rotationFromCamera;//this might be the wrong axis, uncomment this for rotation tracking
 
-  out[0] = Constants.absMax(out[0], 0.1);
-  out[1] = Constants.absMax(out[1], 0.1);
+  out[0] = Constants.absMax(out[0], 0.2);
+  out[1] = Constants.absMax(out[1], 0.2);
   if(Math.abs(out[2])<0.1) out[2] = 0;
   out[2] = Constants.absMax(out[2], 0.05);
 
