@@ -136,16 +136,12 @@ public class SwerveSubsystem extends SubsystemBase {
       double rotationDiff = (pose.getRotation().getRadians() - odometryPose.getRotation().getRadians());
       double xDiff = (pose.getX() - odometryPose.getX());
       double yDiff = (pose.getY() - odometryPose.getY());
+      double dist = Math.sqrt(Math.pow(xDiff,2) + Math.pow(yDiff,2));
 
-      SmartDashboard.putNumber("o_rad",odometryPose.getRotation().getRadians());
-      SmartDashboard.putNumber("d_rad",pose.getRotation().getRadians());
+      double dirToPose = Math.atan2(yDiff,xDiff);
 
-      SmartDashboard.putNumber("x_",odometryPose.getRotation().getRadians());
-      SmartDashboard.putNumber("d_rad",pose.getRotation().getRadians());
-
-
-      out[0] = xDiff * Math.cos(rotationDiff); //get components of X and Y w/ difference in robot heading?
-      out[1] = yDiff * Math.cos(rotationDiff);
+      out[0] = dist * Math.cos(dirToPose +rotationDiff) *0.5;  // you might need to reverse sin and cos
+      out[1] = dist * Math.sin(dirToPose+rotationDiff) * 0.5;
       out[2] = rotationDiff * 0.5;
       return out;
   }
@@ -153,9 +149,9 @@ public class SwerveSubsystem extends SubsystemBase {
   public void driveToPose(Pose2d pose){
       double[] speeds = getDesiredSpeeds(pose);
 
-      speeds[0] = Constants.absMax(speeds[0],0.2);
-      speeds[1] = Constants.absMax(speeds[1],0.2);
-      speeds[2] = Constants.absMax(speeds[2],0.2);
+      speeds[0] = Constants.absMax(speeds[0],0.3);
+      speeds[1] = Constants.absMax(speeds[1],0.3);
+      speeds[2] = Constants.absMax(speeds[2],0.1);
 
       drive(speeds[0],speeds[1],speeds[2]);
   }
