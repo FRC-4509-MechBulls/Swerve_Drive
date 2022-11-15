@@ -76,7 +76,7 @@ public class SwerveSubsystem extends SubsystemBase {
   );
    */
   SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(DriveConstants.kDriveKinematics,
-          new Rotation2d(gyro.getYaw()), new Pose2d(0, 0, new Rotation2d()));
+          new Rotation2d(Math.toRadians(getHeading())), new Pose2d(0, 0, new Rotation2d()));
   Pose2d odometryPose = new Pose2d();
 
 
@@ -121,11 +121,47 @@ public class SwerveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Robot Heading", getHeading());
     SmartDashboard.putBoolean("Drive method called", Timer.getFPGATimestamp()-lastDriveCall<0.1);
 
-      odometryPose = m_odometry.update(new Rotation2d(gyro.getYaw()), frontLeft.getState(), frontRight.getState(),
+      m_odometry.update(new Rotation2d(Math.toRadians(getHeading())), frontLeft.getState(), frontRight.getState(),
               backLeft.getState(), backRight.getState());
-      SmartDashboard.putNumber("oX",odometryPose.getX());
-      SmartDashboard.putNumber("oY",odometryPose.getX());
+      odometryPose = new Pose2d(m_odometry.getPoseMeters().getX()*6.75/0.66, m_odometry.getPoseMeters().getY()*6.75/0.66, m_odometry.getPoseMeters().getRotation());
 
+      //SmartDashboard.putNumber("FL",frontLeft.getState().angle.getRadians());
+
+      SmartDashboard.putNumber("oX",odometryPose.getX());
+      SmartDashboard.putNumber("oY",odometryPose.getY());
+  }
+
+  public double[] getDesiredSpeeds(Pose2d pose){
+      double[] out = new double[3];
+      double rotationDiff = (pose.getRotation().getRadians() - odometryPose.getRotation().getRadians());
+      double xDiff = (pose.getX() - odometryPose.getX());
+      double yDiff = (pose.getY() - odometryPose.getY());
+
+      SmartDashboard.putNumber("o_rad",odometryPose.getRotation().getRadians());
+      SmartDashboard.putNumber("d_rad",pose.getRotation().getRadians());
+
+      SmartDashboard.putNumber("x_",odometryPose.getRotation().getRadians());
+      SmartDashboard.putNumber("d_rad",pose.getRotation().getRadians());
+
+
+      out[0] = xDiff * Math.cos(rotationDiff); //get components of X and Y w/ difference in robot heading?
+      out[1] = yDiff * Math.cos(rotationDiff);
+      out[2] = rotationDiff * 0.5;
+      return out;
+  }
+
+  public void driveToPose(Pose2d pose){
+      double[] speeds = getDesiredSpeeds(pose);
+
+      speeds[0] = Constants.absMax(speeds[0],0.2);
+      speeds[1] = Constants.absMax(speeds[1],0.2);
+      speeds[2] = Constants.absMax(speeds[2],0.2);
+
+      drive(speeds[0],speeds[1],speeds[2]);
+  }
+
+  public void resetPose(){
+      m_odometry.resetPosition(new Pose2d(), new Rotation2d(Math.toRadians(getHeading())));
   }
 
   public void stopModules() {

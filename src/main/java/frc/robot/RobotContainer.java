@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,7 +23,7 @@ import frc.robot.subsystems.VisionSubsystem;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
+  protected final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
   private final VisionSubsystem visionSubsystem = new VisionSubsystem();
 
   private final XboxController driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -30,8 +31,11 @@ public class RobotContainer {
   private final Command rc_drive = new RunCommand(()-> swerveSubsystem.joystickDrive(driverController.getLeftY()*-1,driverController.getLeftX()*-1,driverController.getRightX()*-1), swerveSubsystem);
 
   private final Command swerve_toggleFieldOriented = new InstantCommand(swerveSubsystem::toggleFieldOriented);
+  private final Command swerve_resetPose = new InstantCommand(swerveSubsystem::resetPose);
   private final Command rc_goToTag = new RunCommand(()->swerveSubsystem.drive(visionSubsystem.getDesiredSpeeds()[0],visionSubsystem.getDesiredSpeeds()[1],visionSubsystem.getDesiredSpeeds()[2]), swerveSubsystem);
-    
+
+  private final Command rc_goToPose = new RunCommand(()->swerveSubsystem.driveToPose(new Pose2d()), swerveSubsystem);
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
@@ -56,7 +60,9 @@ public class RobotContainer {
   private void configureButtonBindings() {
     new JoystickButton(driverController, XboxController.Button.kStart.value).whenPressed(() -> swerveSubsystem.zeroHeading());
     new JoystickButton(driverController, XboxController.Button.kY.value).whenHeld(rc_goToTag);
+    new JoystickButton(driverController, XboxController.Button.kB.value).whenHeld(rc_goToPose);
     new JoystickButton(driverController, XboxController.Button.kBack.value).whenPressed(swerve_toggleFieldOriented);
+    new JoystickButton(driverController, XboxController.Button.kA.value).whenPressed(swerve_resetPose);
   }
 
   /**

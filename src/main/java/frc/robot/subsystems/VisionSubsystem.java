@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import frc.robot.RobotContainer;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -18,12 +19,12 @@ import frc.robot.Constants;
 
 public class VisionSubsystem extends SubsystemBase {
   PhotonCamera camera = new PhotonCamera("gloworm");
-
   /** Creates a new Vision. */
   public VisionSubsystem() {}
 
   @Override
   public void periodic() {
+
     // This method will be called once per scheduler run
     for(PhotonTrackedTarget target :camera.getLatestResult().getTargets()){
       int id = target.getFiducialId();
