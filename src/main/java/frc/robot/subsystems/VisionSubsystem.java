@@ -30,13 +30,13 @@ public class VisionSubsystem extends SubsystemBase {
       Transform3d transform = target.getBestCameraToTarget();
       Rotation3d rotation = transform.getRotation();
 
-      SmartDashboard.putNumber("tag"+id+".X", transform.getX());
-      SmartDashboard.putNumber("tag"+id+".Y", transform.getY());
-      SmartDashboard.putNumber("tag"+id+".Z", transform.getZ());
-
-      SmartDashboard.putNumber("tag"+id+".rX", rotation.getX());
-      SmartDashboard.putNumber("tag"+id+".rY", rotation.getY());
-      SmartDashboard.putNumber("tag"+id+".rZ", rotation.getZ());
+//      SmartDashboard.putNumber("tag"+id+".X", transform.getX());
+//      SmartDashboard.putNumber("tag"+id+".Y", transform.getY());
+//      SmartDashboard.putNumber("tag"+id+".Z", transform.getZ());
+//
+//      SmartDashboard.putNumber("tag"+id+".rX", rotation.getX());
+//      SmartDashboard.putNumber("tag"+id+".rY", rotation.getY());
+//      SmartDashboard.putNumber("tag"+id+".rZ", rotation.getZ());
 
       
   double rotationFromCamera = Math.IEEEremainder(lastTransform.getRotation().getZ() + Math.PI, 2*Math.PI);

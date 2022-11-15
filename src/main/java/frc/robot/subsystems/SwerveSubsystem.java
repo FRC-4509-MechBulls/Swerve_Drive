@@ -5,20 +5,25 @@
 package frc.robot.subsystems;
 
 import java.io.FileReader;
+import java.sql.Connection;
 import java.sql.Time;
 
 import com.ctre.phoenix.sensors.Pigeon2;
 
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import com.ctre.phoenix.sensors.Pigeon2.AxisDirection;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 
@@ -62,6 +67,19 @@ public class SwerveSubsystem extends SubsystemBase {
 
   private Pigeon2 gyro = new Pigeon2(0);
 
+  /*
+  private SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(
+          new Rotation2d(gyro.getYaw(), gyro.getPitch()),gyro.getRoll(),
+          new Pose2d(0,0,0),
+          DriveConstants.kDriveKinematics,
+
+  );
+   */
+  SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(DriveConstants.kDriveKinematics,
+          new Rotation2d(gyro.getYaw()), new Pose2d(0, 0, new Rotation2d()));
+  Pose2d odometryPose = new Pose2d();
+
+
   /** Creates a new SwerveSubsystem. */
   public SwerveSubsystem() {
         //put in thread so it doesn't stop the rest of our code from running
@@ -76,6 +94,7 @@ public class SwerveSubsystem extends SubsystemBase {
         
         }).start();
         //allows gyro to calibrate for 1 sec before requesting to reset^^
+
   }
   
 
@@ -101,6 +120,12 @@ public class SwerveSubsystem extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("Robot Heading", getHeading());
     SmartDashboard.putBoolean("Drive method called", Timer.getFPGATimestamp()-lastDriveCall<0.1);
+
+      odometryPose = m_odometry.update(new Rotation2d(gyro.getYaw()), frontLeft.getState(), frontRight.getState(),
+              backLeft.getState(), backRight.getState());
+      SmartDashboard.putNumber("oX",odometryPose.getX());
+      SmartDashboard.putNumber("oY",odometryPose.getX());
+
   }
 
   public void stopModules() {
