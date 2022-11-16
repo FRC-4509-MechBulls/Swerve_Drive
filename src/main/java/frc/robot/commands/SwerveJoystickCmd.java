@@ -49,7 +49,6 @@ public class SwerveJoystickCmd extends CommandBase {
     double turningSpeed = turningSpdFunction.get()*-1;
 
     // 2. Apply deadband
-    SmartDashboard.putNumber("input", xSpeed);
     xSpeed = Math.abs(xSpeed) > OIConstants.kDeadband ? xSpeed : 0.0;
     ySpeed = Math.abs(ySpeed) > OIConstants.kDeadband ? ySpeed : 0.0;
     turningSpeed = Math.abs(turningSpeed) > OIConstants.kDeadband ? turningSpeed : 0.0;
