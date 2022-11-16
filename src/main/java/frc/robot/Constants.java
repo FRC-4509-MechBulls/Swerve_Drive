@@ -35,7 +35,8 @@ public final class Constants {
         public static final double kAbsToRadians = 2.0 * Math.PI;
 
         //Gains
-        public static final double kPTurning = 0.5; //idk
+        public static final double kPTurning = 0.3; //0.3
+        public static final double kDTurning = 0.0; //0.0
     }
 
     public static final class DriveConstants {
