@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import java.io.FileReader;
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.Time;
 
@@ -16,6 +17,7 @@ import com.ctre.phoenix.sensors.Pigeon2.AxisDirection;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -26,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.lib.FieldTag;
 
 public class SwerveSubsystem extends SubsystemBase {
   private final SwerveModule frontLeft = new SwerveModule(
@@ -100,9 +103,13 @@ public class SwerveSubsystem extends SubsystemBase {
 
   //reset gyroscope to have it set the current direction as the forward direction of field when robot boots up
   public void zeroHeading() {
-        gyro.zeroGyroBiasNow();
-        gyro.setYaw(0);
+      gyro.zeroGyroBiasNow();
+      gyro.setYaw(0);
   }
+    public void zeroHeading(double yaw) {
+        gyro.zeroGyroBiasNow();
+        gyro.setYaw(yaw);
+    }
 
   //A number equal to x - (y Q), where Q is the quotient of x / y rounded to the nearest integer
   //(if x / y falls halfway between two integers, the even integer is returned)
@@ -144,6 +151,22 @@ public class SwerveSubsystem extends SubsystemBase {
       out[1] = dist * Math.sin(dirToPose+rotationDiff) * 0.5;
       out[2] = rotationDiff * 0.5;
       return out;
+  }
+  public void fieldTagSpotted(FieldTag fieldTag, Transform3d transform){
+      double newX = -transform.getX() - fieldTag.getPose().getX();
+      double newY = -transform.getY() - fieldTag.getPose().getY();
+
+
+      Rotation2d newRotation = new Rotation2d((-transform.getRotation().getZ() - fieldTag.getPose().getRotation().getRadians())+2*Math.PI);
+
+
+      SmartDashboard.putNumber("camHeading", newRotation.getRadians());
+      SmartDashboard.putNumber("gyroHeading", (Math.toRadians(getHeading())+2*Math.PI)%(2*Math.PI));
+
+      Pose2d newPose = new Pose2d(newX/6.75*0.66,newY/6.75*0.66, newRotation); //kil
+      m_odometry.resetPosition(newPose, newRotation);
+      zeroHeading(newRotation.getDegrees());
+
   }
 
   public void driveToPose(Pose2d pose){

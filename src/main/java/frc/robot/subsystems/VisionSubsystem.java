@@ -4,12 +4,12 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.geometry.*;
 import frc.robot.RobotContainer;
+import frc.robot.lib.FieldTag;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,7 +20,16 @@ import frc.robot.Constants;
 public class VisionSubsystem extends SubsystemBase {
   PhotonCamera camera = new PhotonCamera("gloworm");
   /** Creates a new Vision. */
-  public VisionSubsystem() {}
+
+  private FieldTag[] fieldTags = new FieldTag[1];
+  private SwerveSubsystem swerveSubsystem;
+  public VisionSubsystem(SwerveSubsystem swerveSubsystem) {
+    this.swerveSubsystem = swerveSubsystem;
+    fieldTags[0] = new FieldTag(0, new Pose2d(-1, 0, new Rotation2d(Math.PI)));
+  }
+
+
+
 
   @Override
   public void periodic() {
@@ -30,6 +39,13 @@ public class VisionSubsystem extends SubsystemBase {
       int id = target.getFiducialId();
       Transform3d transform = target.getBestCameraToTarget();
       Rotation3d rotation = transform.getRotation();
+
+      for(int i = 0; i<fieldTags.length; i++){
+        if(fieldTags[i].getID() != id) continue;
+        Transform3d sentTransform = new Transform3d(new Translation3d(transform.getX()*-1,transform.getY()*-1,transform.getZ()),transform.getRotation());
+        swerveSubsystem.fieldTagSpotted(fieldTags[i], transform);
+
+      }
 
 //      SmartDashboard.putNumber("tag"+id+".X", transform.getX());
 //      SmartDashboard.putNumber("tag"+id+".Y", transform.getY());
@@ -48,7 +64,6 @@ public class VisionSubsystem extends SubsystemBase {
         lastSeenOnRight = transform.getY()>0;
         lastTransform = transform;
         lastSeenTime = Timer.getFPGATimestamp();
-
       }
 
     }

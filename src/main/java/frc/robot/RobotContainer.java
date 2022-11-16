@@ -24,7 +24,7 @@ import frc.robot.subsystems.VisionSubsystem;
  */
 public class RobotContainer {
   protected final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
-  private final VisionSubsystem visionSubsystem = new VisionSubsystem();
+  private final VisionSubsystem visionSubsystem = new VisionSubsystem(swerveSubsystem);
 
   private final XboxController driverController = new XboxController(OIConstants.kDriverControllerPort);
 
@@ -58,10 +58,10 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(driverController, XboxController.Button.kStart.value).whenPressed(() -> swerveSubsystem.zeroHeading());
+    new JoystickButton(driverController, XboxController.Button.kBack.value).whenPressed(() -> swerveSubsystem.zeroHeading());
     new JoystickButton(driverController, XboxController.Button.kY.value).whenHeld(rc_goToTag);
     new JoystickButton(driverController, XboxController.Button.kB.value).whenHeld(rc_goToPose);
-    new JoystickButton(driverController, XboxController.Button.kBack.value).whenPressed(swerve_toggleFieldOriented);
+    new JoystickButton(driverController, XboxController.Button.kStart.value).whenPressed(swerve_toggleFieldOriented);
     new JoystickButton(driverController, XboxController.Button.kA.value).whenPressed(swerve_resetPose);
   }
 
