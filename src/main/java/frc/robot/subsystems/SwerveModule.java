@@ -112,7 +112,7 @@ public class SwerveModule extends SubsystemBase {
   //Setters
   public void setDesiredState(SwerveModuleState state) {
     if (Math.abs(state.speedMetersPerSecond) < 0.001) { //prevents wheels from going to OG pos when joysticks are not moved
-      stop();
+      driveMotor.set(TalonFXControlMode.PercentOutput, 0);
       return;
     }
     //Debug output: SmartDashboard.putNumber("preOpRadians" + absoluteEncoder.getSourceChannel(), state.angle.getRadians());
@@ -122,7 +122,7 @@ public class SwerveModule extends SubsystemBase {
 		setAngle = Math.abs(deltaConverted) < (Math.PI / 2) ? getTurningPosition() + deltaConverted : getTurningPosition() - ((Math.abs(deltaConverted) * (Math.PI/deltaConverted)) * (1-Math.abs(deltaConverted/Math.PI))); //makes set angle +/- 1/2pi of our current position(capable of pointing all directions)
 
     driveMotor.set(TalonFXControlMode.PercentOutput, state.speedMetersPerSecond / DriveConstants.kPhysicalMaxSpeedMetersPerSecond); //scales vel down using max speed
-    turningMotor.set(TalonFXControlMode.Position, setAngle * ModuleConstants.kRadiansToTurning);//, DemandType.ArbitraryFeedForward, arbitraryFF); //Position Control w/ Arbitrary Feedforward
+    turningMotor.set(TalonFXControlMode.Position, setAngle * ModuleConstants.kRadiansToTurning); //Position Control
     
     //Debug output: SmartDashboard.putNumber("stateAngle" + absoluteEncoder.getSourceChannel(), getState().angle.getRadians());
     //Debug output: SmartDashboard.putString("Swerve[" + absoluteEncoder.getSourceChannel() + "] state", state.toString());
