@@ -35,8 +35,7 @@ public final class Constants {
         public static final double kAbsToRadians = 2.0 * Math.PI;
 
         //Gains
-        public static final double kPTurning = 0.21; //0.21 //works from 0.1-0.3 but 0.21 seems to offer low chattering and pretty quick alignment
-        public static final double kDTurning = 0.0; //0.0
+        public static final double kPTurning = 0.5; //idk
     }
 
     public static final class DriveConstants {
