@@ -57,7 +57,7 @@ public class VisionSubsystem extends SubsystemBase {
 
       
   double rotationFromCamera = Math.IEEEremainder(lastTransform.getRotation().getZ() + Math.PI, 2*Math.PI);
-  SmartDashboard.putNumber("rotationFromCamera", rotationFromCamera);
+ // SmartDashboard.putNumber("rotationFromCamera", rotationFromCamera);
 
 
       if(id==0){
@@ -87,7 +87,7 @@ public double[] getDesiredSpeeds(){
 
   out[0] = (lastTransform.getX()-1) *0.5; // get one meter from target
   out[1] = lastTransform.getY() * 0.5;
-  SmartDashboard.putNumber("out0",out[0]);
+ // SmartDashboard.putNumber("out0",out[0]);
 
   double rotationFromCamera = Math.IEEEremainder(lastTransform.getRotation().getZ() + Math.PI, 2*Math.PI);
   out[2] =  rotationFromCamera;//this might be the wrong axis, uncomment this for rotation tracking

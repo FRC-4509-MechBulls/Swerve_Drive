@@ -125,8 +125,8 @@ public class SwerveSubsystem extends SubsystemBase {
   double lastDriveCall = 0;
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Robot Heading", getHeading());
-    SmartDashboard.putBoolean("Drive method called", Timer.getFPGATimestamp()-lastDriveCall<0.1);
+   // SmartDashboard.putNumber("Robot Heading", getHeading());
+   // SmartDashboard.putBoolean("Drive method called", Timer.getFPGATimestamp()-lastDriveCall<0.1);
 
       m_odometry.update(new Rotation2d(Math.toRadians(getHeading())), frontLeft.getState(), frontRight.getState(),
               backLeft.getState(), backRight.getState());
@@ -134,8 +134,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
       //SmartDashboard.putNumber("FL",frontLeft.getState().angle.getRadians());
 
-      SmartDashboard.putNumber("oX",odometryPose.getX());
-      SmartDashboard.putNumber("oY",odometryPose.getY());
+      SmartDashboard.putNumber("od_x",odometryPose.getX());
+      SmartDashboard.putNumber("od_y",odometryPose.getY());
+      SmartDashboard.putNumber("od_r",odometryPose.getRotation().getDegrees());
+
   }
 
   public double[] getDesiredSpeeds(Pose2d pose){
@@ -153,19 +155,29 @@ public class SwerveSubsystem extends SubsystemBase {
       return out;
   }
   public void fieldTagSpotted(FieldTag fieldTag, Transform3d transform){
-      double newX = -transform.getX() - fieldTag.getPose().getX();
-      double newY = -transform.getY() - fieldTag.getPose().getY();
 
 
-      Rotation2d newRotation = new Rotation2d((-transform.getRotation().getZ() - fieldTag.getPose().getRotation().getRadians())+2*Math.PI);
+      Rotation2d newRotation = new Rotation2d(Math.IEEEremainder((-transform.getRotation().getZ() - fieldTag.getPose().getRotation().getRadians()+4*Math.PI),2*Math.PI));
+
+      double newX = -transform.getX()*Math.sin(newRotation.getRadians()) - fieldTag.getPose().getX();
+      double newY = -transform.getY()*Math.cos(newRotation.getRadians()) - fieldTag.getPose().getY();
+
+      //SmartDashboard.putNumber("camHeading", newRotation.getRadians());
+      //SmartDashboard.putNumber("gyroHeading", (Math.toRadians(getHeading())+2*Math.PI)%(2*Math.PI));
+
+      Pose2d newPose = new Pose2d(newX,newY, newRotation); //kil
+
+        double cam_x = transform.getX();
+        double cam_y = transform.getY();
+        double cam_theta = Math.atan2(cam_x,cam_y);
+      SmartDashboard.putNumber("cam_x",cam_x);
+      SmartDashboard.putNumber("cam_y",cam_y);
+      SmartDashboard.putNumber("cam_theta",Math.toDegrees(cam_theta));
 
 
-      SmartDashboard.putNumber("camHeading", newRotation.getRadians());
-      SmartDashboard.putNumber("gyroHeading", (Math.toRadians(getHeading())+2*Math.PI)%(2*Math.PI));
 
-      Pose2d newPose = new Pose2d(newX/6.75*0.66,newY/6.75*0.66, newRotation); //kil
-      m_odometry.resetPosition(newPose, newRotation);
-      zeroHeading(newRotation.getDegrees());
+      // m_odometry.resetPosition(newPose, newRotation);
+    //  zeroHeading(newRotation.getDegrees());
 
   }
 
