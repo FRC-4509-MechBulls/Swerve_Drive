@@ -149,7 +149,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
       double dirToPose = Math.atan2(yDiff,xDiff);
 
-      out[0] = dist * Math.cos(dirToPose +rotationDiff) *0.5;  // you might need to reverse sin and cos
+      out[0] = dist * Math.cos(dirToPose +rotationDiff) *0.5;
       out[1] = dist * Math.sin(dirToPose+rotationDiff) * 0.5;
       out[2] = rotationDiff * 0.5;
       return out;
@@ -159,8 +159,11 @@ public class SwerveSubsystem extends SubsystemBase {
 
       Rotation2d newRotation = new Rotation2d(Math.IEEEremainder((-transform.getRotation().getZ() - fieldTag.getPose().getRotation().getRadians()+4*Math.PI),2*Math.PI));
 
-      double newX = -transform.getX()*Math.sin(newRotation.getRadians()) - fieldTag.getPose().getX();
-      double newY = -transform.getY()*Math.cos(newRotation.getRadians()) - fieldTag.getPose().getY();
+  //    double newX = -transform.getX()*Math.sin(newRotation.getRadians()) - fieldTag.getPose().getX();
+   //   double newY = -transform.getY()*Math.cos(newRotation.getRadians()) - fieldTag.getPose().getY();
+
+      double newY = ( transform.getY()* Math.cos(-newRotation.getRadians()) + transform.getX() * Math.cos(Math.PI/2 + newRotation.getRadians()) + fieldTag.getPose().getY() ) ;
+      double newX = 0- ( transform.getY()*Math.sin(-newRotation.getRadians()) + transform.getX() * Math.sin(Math.PI/2 + newRotation.getRadians()) + fieldTag.getPose().getX() ) ;
 
       //SmartDashboard.putNumber("camHeading", newRotation.getRadians());
       //SmartDashboard.putNumber("gyroHeading", (Math.toRadians(getHeading())+2*Math.PI)%(2*Math.PI));
@@ -169,15 +172,19 @@ public class SwerveSubsystem extends SubsystemBase {
 
         double cam_x = transform.getX();
         double cam_y = transform.getY();
-        double cam_theta = Math.atan2(cam_x,cam_y);
+        double cam_theta = newRotation.getDegrees();
+
       SmartDashboard.putNumber("cam_x",cam_x);
       SmartDashboard.putNumber("cam_y",cam_y);
-      SmartDashboard.putNumber("cam_theta",Math.toDegrees(cam_theta));
+      SmartDashboard.putNumber("cam_theta",(cam_theta));
+
+      SmartDashboard.putNumber("new_x", newX);
+      SmartDashboard.putNumber("new_y", newY);
 
 
-
-      // m_odometry.resetPosition(newPose, newRotation);
-    //  zeroHeading(newRotation.getDegrees());
+        Pose2d poseToWheels = new Pose2d(newX/6.75*0.66,newY/6.75*0.66,newRotation);
+       m_odometry.resetPosition(poseToWheels,newRotation);
+      zeroHeading(newRotation.getDegrees());
 
   }
 
