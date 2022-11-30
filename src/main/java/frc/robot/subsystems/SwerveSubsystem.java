@@ -162,8 +162,18 @@ public class SwerveSubsystem extends SubsystemBase {
   //    double newX = -transform.getX()*Math.sin(newRotation.getRadians()) - fieldTag.getPose().getX();
    //   double newY = -transform.getY()*Math.cos(newRotation.getRadians()) - fieldTag.getPose().getY();
 
-      double newY = ( transform.getY()* Math.cos(-newRotation.getRadians()) + transform.getX() * Math.cos(Math.PI/2 + newRotation.getRadians()) + fieldTag.getPose().getY() ) ;
-      double newX = 0- ( transform.getY()*Math.sin(-newRotation.getRadians()) + transform.getX() * Math.sin(Math.PI/2 + newRotation.getRadians()) + fieldTag.getPose().getX() ) ;
+      double newY = 0-( transform.getY()* Math.cos(-newRotation.getRadians()) + transform.getX() * Math.cos(Math.PI/2 - newRotation.getRadians()) + fieldTag.getPose().getY() ) ;
+      double newX = 0- ( transform.getY()*Math.sin(-newRotation.getRadians()) + transform.getX() * Math.sin(Math.PI/2 - newRotation.getRadians()) + fieldTag.getPose().getX() ) ;
+
+      double newYnp = ( transform.getY()* Math.cos(-newRotation.getRadians()) + transform.getX() * Math.cos(Math.PI/2 + newRotation.getRadians()) + fieldTag.getPose().getY() ) ;
+      double newYnn = ( transform.getY()* Math.cos(-newRotation.getRadians()) + transform.getX() * Math.cos(Math.PI/2 - newRotation.getRadians()) + fieldTag.getPose().getY() ) ;
+      double newYpp = ( transform.getY()* Math.cos(-newRotation.getRadians()) + transform.getX() * Math.cos(Math.PI/2 - newRotation.getRadians()) + fieldTag.getPose().getY() ) ;
+
+
+      SmartDashboard.putNumber("new_ynp_o", newYnp);
+      SmartDashboard.putNumber("new_ynn", newYnn);
+      SmartDashboard.putNumber("new_ypp", newYpp);
+
 
       //SmartDashboard.putNumber("camHeading", newRotation.getRadians());
       //SmartDashboard.putNumber("gyroHeading", (Math.toRadians(getHeading())+2*Math.PI)%(2*Math.PI));
@@ -174,8 +184,8 @@ public class SwerveSubsystem extends SubsystemBase {
         double cam_y = transform.getY();
         double cam_theta = newRotation.getDegrees();
 
-      SmartDashboard.putNumber("cam_x",cam_x);
-      SmartDashboard.putNumber("cam_y",cam_y);
+     // SmartDashboard.putNumber("cam_x",cam_x);
+     // SmartDashboard.putNumber("cam_y",cam_y);
       SmartDashboard.putNumber("cam_theta",(cam_theta));
 
       SmartDashboard.putNumber("new_x", newX);
@@ -183,6 +193,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
 
         Pose2d poseToWheels = new Pose2d(newX/6.75*0.66,newY/6.75*0.66,newRotation);
+
+
        m_odometry.resetPosition(poseToWheels,newRotation);
       zeroHeading(newRotation.getDegrees());
 
