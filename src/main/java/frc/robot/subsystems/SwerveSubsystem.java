@@ -103,9 +103,9 @@ public class SwerveSubsystem extends SubsystemBase {
       gyro = new WPI_Pigeon2(DriveConstants.kPigeonPort);
       gyro.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_1_General, 3001, 1000);
       gyro.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_6_SensorFusion, 3003, 1000);
+      //gyro.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, 3007, 1000);
       gyro.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_3_GeneralAccel, 3011, 1000);
       gyro.setStatusFramePeriod(PigeonIMU_StatusFrame.RawStatus_4_Mag, 3017, 1000);
-      gyro.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_2_Gyro, 3021, 1000);
       gyro.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_6_Accel, 3023, 1000);
       gyro.configFactoryDefault(1000);
       gyro.configZAxisGyroError(DriveConstants.kGyroZError, 1000);
